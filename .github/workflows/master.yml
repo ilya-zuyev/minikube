@@ -56,7 +56,7 @@ jobs:
       - name: Build Binaries
         run: |
           make cross
-          make e2e-cross
+          make out/e2e-linux-arm64
           cp -r test/integration/testdata ./out
           whoami
           echo github ref $GITHUB_REF

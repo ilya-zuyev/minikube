@@ -353,7 +353,7 @@ endif
 	@sed -i -e 's/Json/JSON/' $@ && rm -f ./-e
 
 .PHONY: cross
-cross: minikube-linux-amd64 minikube-darwin-amd64 minikube-windows-amd64.exe ## Build minikube for all platform
+cross: minikube-linux-amd64 minikube-darwin-amd64 minikube-windows-amd64.exe minikube-linux-arm64  ## Build minikube for all platform
 
 .PHONY: exotic
 exotic: out/minikube-linux-arm out/minikube-linux-arm64 out/minikube-linux-ppc64le out/minikube-linux-s390x ## Build minikube for non-amd64 linux

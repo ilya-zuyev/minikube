@@ -468,7 +468,7 @@ func validateDryRun(ctx context.Context, t *testing.T, profile string) {
 	defer cancel()
 
 	// Too little memory!
-	startArgs = []string{}
+	var startArgs []string
 	orgStartArgs := StartArgs()
 
 	for i := 0; i < len(orgStartArgs); i++ {

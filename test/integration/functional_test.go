@@ -758,7 +758,14 @@ func validateServiceCmd(ctx context.Context, t *testing.T, profile string) {
 		}
 	}()
 
-	rr, err := Run(t, exec.CommandContext(ctx, "kubectl", "--context", profile, "create", "deployment", "hello-node", "--image=k8s.gcr.io/echoserver:1.4"))
+	var echoServerArg string
+	if runtime.GOARCH == "arm64" {
+		echoServerArg = "k8s.gcr.io/echoserver-arm:1.8"
+	} else {
+		echoServerArg = "k8s.gcr.io/echoserver:1.10"
+	}
+
+	rr, err := Run(t, exec.CommandContext(ctx, "kubectl", "--context", profile, "create", "deployment", "hello-node", "--image="+echoServerArg))
 	if err != nil {
 		t.Logf("%q failed: %v (may not be an error).", rr.Command(), err)
 	}

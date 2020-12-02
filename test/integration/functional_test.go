@@ -559,7 +559,13 @@ func validateCacheCmd(ctx context.Context, t *testing.T, profile string) {
 			if err != nil {
 				t.Errorf("failed to get images by %q ssh %v", rr.Command(), err)
 			}
-			if !strings.Contains(rr.Output(), "0184c1613d929") {
+			var pauseId string
+			if runtime.GOARCH == "arm64" {
+				pauseId = "3d18732f8686c"
+			} else {
+				pauseId = "0184c1613d929"
+			}
+			if !strings.Contains(rr.Output(), pauseId) {
 				t.Errorf("expected sha for pause:3.3 '0184c1613d929' to be in the output but got *%s*", rr.Output())
 			}
 
@@ -924,6 +930,11 @@ func validateSSHCmd(ctx context.Context, t *testing.T, profile string) {
 
 // validateMySQL validates a minimalist MySQL deployment
 func validateMySQL(ctx context.Context, t *testing.T, profile string) {
+	if runtime.GOARCH == "arm64" {
+		t.Skip("arm64 is not supported by mysql. skip the test")
+		return
+	}
+
 	defer PostMortemLogs(t, profile)
 
 	rr, err := Run(t, exec.CommandContext(ctx, "kubectl", "--context", profile, "replace", "--force", "-f", filepath.Join(*testdataDir, "mysql.yaml")))

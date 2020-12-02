@@ -559,13 +559,13 @@ func validateCacheCmd(ctx context.Context, t *testing.T, profile string) {
 			if err != nil {
 				t.Errorf("failed to get images by %q ssh %v", rr.Command(), err)
 			}
-			var pauseId string
+			var pauseID string
 			if runtime.GOARCH == "arm64" {
-				pauseId = "3d18732f8686c"
+				pauseID = "3d18732f8686c"
 			} else {
-				pauseId = "0184c1613d929"
+				pauseID = "0184c1613d929"
 			}
-			if !strings.Contains(rr.Output(), pauseId) {
+			if !strings.Contains(rr.Output(), pauseID) {
 				t.Errorf("expected sha for pause:3.3 '0184c1613d929' to be in the output but got *%s*", rr.Output())
 			}
 

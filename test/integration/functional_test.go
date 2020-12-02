@@ -483,7 +483,7 @@ func validateDryRun(ctx context.Context, t *testing.T, profile string) {
 		startArgs = append(startArgs, arg)
 	}
 
-	startArgs := append([]string{"start", "-p", profile, "--dry-run", "--memory", "250MB", "--alsologtostderr"}, startArgs...)
+	startArgs = append([]string{"start", "-p", profile, "--dry-run", "--memory", "250MB", "--alsologtostderr"}, startArgs...)
 	c := exec.CommandContext(mctx, Target(), startArgs...)
 	rr, err := Run(t, c)
 

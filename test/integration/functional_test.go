@@ -468,7 +468,22 @@ func validateDryRun(ctx context.Context, t *testing.T, profile string) {
 	defer cancel()
 
 	// Too little memory!
-	startArgs := append([]string{"start", "-p", profile, "--dry-run", "--memory", "250MB", "--alsologtostderr"}, StartArgs()...)
+	startArgs = []string{}
+	orgStartArgs := StartArgs()
+
+	for i := 0; i < len(orgStartArgs); i++ {
+		arg := orgStartArgs[i]
+		if strings.HasPrefix(arg, "--memory=") {
+			continue
+		}
+		if arg == "--memory" {
+			i++ // skip next
+			continue
+		}
+		startArgs = append(startArgs, arg)
+	}
+
+	startArgs := append([]string{"start", "-p", profile, "--dry-run", "--memory", "250MB", "--alsologtostderr"}, startArgs...)
 	c := exec.CommandContext(mctx, Target(), startArgs...)
 	rr, err := Run(t, c)
 

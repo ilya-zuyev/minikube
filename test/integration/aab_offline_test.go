@@ -32,22 +32,22 @@ func TestOffline(t *testing.T) {
 	t.Run("group", func(t *testing.T) {
 		for _, rt := range []string{"docker", "crio", "containerd"} {
 			rt := rt
-			t.Run(runtime, func(t *testing.T) {
+			t.Run(rt, func(t *testing.T) {
 				MaybeParallel(t)
 
 				if rt != "docker" && runtime.GOARCH == "arm64" {
 					t.Skipf("skipping %s - only docker runtime supported on arm64", t.Name())
 				}
 
-				if runtime != "docker" && NoneDriver() {
+				if rt != "docker" && NoneDriver() {
 					t.Skipf("skipping %s - incompatible with none driver", t.Name())
 				}
 
-				profile := UniqueProfileName(fmt.Sprintf("offline-%s", runtime))
+				profile := UniqueProfileName(fmt.Sprintf("offline-%s", rt))
 				ctx, cancel := context.WithTimeout(context.Background(), Minutes(15))
 				defer CleanupWithLogs(t, profile, cancel)
 
-				startArgs := []string{"start", "-p", profile, "--alsologtostderr", "-v=1", "--memory=2000", "--wait=true", "--container-runtime", runtime}
+				startArgs := []string{"start", "-p", profile, "--alsologtostderr", "-v=1", "--memory=2000", "--wait=true", "--container-runtime", rt}
 				startArgs = append(startArgs, StartArgs()...)
 				c := exec.CommandContext(ctx, Target(), startArgs...)
 				env := os.Environ()

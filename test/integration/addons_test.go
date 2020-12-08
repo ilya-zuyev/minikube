@@ -305,6 +305,10 @@ func validateMetricsServerAddon(ctx context.Context, t *testing.T, profile strin
 }
 
 func validateHelmTillerAddon(ctx context.Context, t *testing.T, profile string) {
+	if runtime.GOARCH == "arm64" {
+		t.Skipf("Skip helm addon test for arm64")
+	}
+
 	defer PostMortemLogs(t, profile)
 
 	client, err := kapi.Client(profile)

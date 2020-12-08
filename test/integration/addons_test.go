@@ -41,6 +41,11 @@ import (
 
 // TestAddons tests addons that require no special environment -- in parallel
 func TestAddons(t *testing.T) {
+
+	if runtime.GOARCH == "arm64" {
+		t.Skipf("Skip helm addon test for arm64")
+	}
+
 	profile := UniqueProfileName("addons")
 	ctx, cancel := context.WithTimeout(context.Background(), Minutes(40))
 	defer Cleanup(t, profile, cancel)
@@ -305,9 +310,6 @@ func validateMetricsServerAddon(ctx context.Context, t *testing.T, profile strin
 }
 
 func validateHelmTillerAddon(ctx context.Context, t *testing.T, profile string) {
-	if runtime.GOARCH == "arm64" {
-		t.Skipf("Skip helm addon test for arm64")
-	}
 
 	defer PostMortemLogs(t, profile)
 

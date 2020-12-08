@@ -23,14 +23,15 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"runtime"
 	"testing"
 )
 
 // TestOffline makes sure minikube works without internet, once it the user has already cached the images, This test has to run after TestDownloadOnly!
 func TestOffline(t *testing.T) {
 	t.Run("group", func(t *testing.T) {
-		for _, runtime := range []string{"docker", "crio", "containerd"} {
-			runtime := runtime
+		for _, rt := range []string{"docker", "crio", "containerd"} {
+			rt := rt
 			t.Run(runtime, func(t *testing.T) {
 				MaybeParallel(t)
 

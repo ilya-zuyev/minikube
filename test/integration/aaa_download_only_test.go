@@ -178,7 +178,7 @@ func TestDownloadOnlyKic(t *testing.T) {
 	if err != nil {
 		t.Errorf("failed to read tarball file %q: %v", tarball, err)
 	}
-	if runtime.GOARCH != "arm64" {
+	if !Arm64Platform() {
 		// Make sure it has the correct checksum
 		checksum := md5.Sum(contents)
 		remoteChecksum, err := ioutil.ReadFile(download.PreloadChecksumPath(constants.DefaultKubernetesVersion, cRuntime))

@@ -22,7 +22,6 @@ import (
 	"context"
 	"fmt"
 	"os/exec"
-	"runtime"
 	"strings"
 	"testing"
 )
@@ -32,7 +31,7 @@ func TestPreload(t *testing.T) {
 		t.Skipf("skipping %s - incompatible with none driver", t.Name())
 	}
 
-	if runtime.GOARCH == "arm64" {
+	if Arm64Platform() {
 		t.Skipf("skipping %s - not yet supported on arm64", t.Name())
 	}
 

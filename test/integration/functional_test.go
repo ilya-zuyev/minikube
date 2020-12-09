@@ -575,7 +575,7 @@ func validateCacheCmd(ctx context.Context, t *testing.T, profile string) {
 				t.Errorf("failed to get images by %q ssh %v", rr.Command(), err)
 			}
 			var pauseID string
-			if runtime.GOARCH == "arm64" {
+			if Arm64Platform() {
 				pauseID = "3d18732f8686c"
 			} else {
 				pauseID = "0184c1613d929"
@@ -774,7 +774,7 @@ func validateServiceCmd(ctx context.Context, t *testing.T, profile string) {
 	}()
 
 	var echoServerArg string
-	if runtime.GOARCH == "arm64" {
+	if Arm64Platform() {
 		echoServerArg = "k8s.gcr.io/echoserver-arm:1.8"
 	} else {
 		echoServerArg = "k8s.gcr.io/echoserver:1.10"
@@ -952,7 +952,7 @@ func validateSSHCmd(ctx context.Context, t *testing.T, profile string) {
 
 // validateMySQL validates a minimalist MySQL deployment
 func validateMySQL(ctx context.Context, t *testing.T, profile string) {
-	if runtime.GOARCH == "arm64" {
+	if Arm64Platform() {
 		t.Skip("arm64 is not supported by mysql. skip the test")
 		return
 	}

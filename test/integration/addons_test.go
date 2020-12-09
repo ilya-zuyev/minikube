@@ -42,7 +42,7 @@ import (
 // TestAddons tests addons that require no special environment -- in parallel
 func TestAddons(t *testing.T) {
 
-	if runtime.GOARCH == "arm64" {
+	if !Arm64Platform() {
 		t.Skipf("Skip helm addon test for arm64")
 	}
 

@@ -22,6 +22,7 @@ import (
 	"context"
 	"fmt"
 	"os/exec"
+	"runtime"
 	"strings"
 	"testing"
 )
@@ -29,6 +30,10 @@ import (
 func TestPreload(t *testing.T) {
 	if NoneDriver() {
 		t.Skipf("skipping %s - incompatible with none driver", t.Name())
+	}
+
+	if runtime.GOARCH == "arm64" {
+		t.Skipf("skipping %s - not yet supported on arm64", t.Name())
 	}
 
 	profile := UniqueProfileName("test-preload")

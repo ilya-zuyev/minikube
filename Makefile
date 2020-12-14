@@ -589,6 +589,17 @@ kic-base-image: ## builds the kic base image and tags local/kicbase:latest and l
 	docker tag local/kicbase:$(KIC_VERSION) local/kicbase:latest
 	docker tag local/kicbase:$(KIC_VERSION) local/kicbase:$(KIC_VERSION)-$(COMMIT_SHORT)
 
+# experimental multi-arch kicbase image
+X_DOCKER_BUILDER ?= minikube-builder
+X_BUILD_ENV ?= DOCKER_CLI_EXPERIMENTAL=enabled
+X_IMG = gcr.io/kicbase/kicbase-experimental
+#
+.PHONY: kic-base-image-x
+kic-base-image-x:
+	env $(X_BUILD_ENV) docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
+	env $(X_BUILD_ENV) docker buildx create --driver-opt image=moby/buildkit:master --name kicbase-builder --use || true
+	env $(X_BUILD_ENV) docker buildx build --rm --platform linux/arm64,linux/amd64  -t $(X_IMG):$(KIC_VERSION) --push  --build-arg COMMIT_SHA=${VERSION}-$(COMMIT) ./deploy/kicbase
+
 .PHONY: upload-preloaded-images-tar
 upload-preloaded-images-tar: out/minikube # Upload the preloaded images for oldest supported, newest supported, and default kubernetes versions to GCS.
 	go build -ldflags="$(MINIKUBE_LDFLAGS)" -o out/upload-preload ./hack/preload-images/*.go
@@ -645,17 +656,6 @@ ifndef AUTOPUSH
 else
 	$(MAKE) push-kic-base-image-gcr push-kic-base-image-hub push-kic-base-image-gh
 endif
-
-X_DOCKER_BUILDER ?= minikube-builder
-X_BUILD_ENV ?= DOCKER_CLI_EXPERIMENTAL=enabled
-X_IMG = gcr.io/kicbase/kicbase
-
-.PHONY: kic-base-image-x
-kic-base-image-x: ## todo
-	env $(X_BUILD_ENV) docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
-	env $(X_BUILD_ENV) docker buildx create --name kicbase-builder --use || true
-	env $(X_BUILD_ENV) docker buildx build --platform linux/arm64,linux/amd64 -t $(X_IMG):$(KIC_VERSION) --push  --build-arg COMMIT_SHA=${VERSION}-$(COMMIT) ./deploy/kicbase
-
 
 .PHONY: out/gvisor-addon
 out/gvisor-addon: pkg/minikube/assets/assets.go pkg/minikube/translate/translations.go ## Build gvisor addon

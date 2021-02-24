@@ -88,7 +88,7 @@ func etcd(v semver.Version, mirror string) string {
 
 	switch v.Minor {
 	case 17, 18:
-		ev = "3.4.3-0"
+		ev = "3.4.3-0@sha256:4ad90a11b55313b182afc186b9876c8e891531b8db4c9bf1541953021618d0e2"
 	case 16:
 		ev = "3.3.15-0"
 	case 14, 15:

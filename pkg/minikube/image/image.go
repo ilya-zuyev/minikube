@@ -19,6 +19,7 @@ package image
 import (
 	"context"
 	"fmt"
+	v1 "github.com/google/go-containerregistry/pkg/v1"
 	"io/ioutil"
 	"os"
 	"os/exec"
@@ -30,7 +31,6 @@ import (
 	"github.com/docker/docker/client"
 	"github.com/google/go-containerregistry/pkg/authn"
 	"github.com/google/go-containerregistry/pkg/name"
-	v1 "github.com/google/go-containerregistry/pkg/v1"
 	"github.com/google/go-containerregistry/pkg/v1/daemon"
 	"github.com/google/go-containerregistry/pkg/v1/remote"
 	"github.com/google/go-containerregistry/pkg/v1/tarball"
@@ -135,34 +135,6 @@ func Tag(img string) string {
 	return img
 }
 
-// WriteImageToDaemon write img to the local docker daemon
-func WriteImageToDaemon(img string) error {
-	klog.Infof("Writing %s to local daemon", img)
-	ref, err := name.ParseReference(img)
-	if err != nil {
-		return errors.Wrap(err, "parsing reference")
-	}
-	klog.V(3).Infof("Getting image %v", ref)
-	i, err := remote.Image(ref)
-	if err != nil {
-		if strings.Contains(err.Error(), "GitHub Docker Registry needs login") {
-			ErrGithubNeedsLogin = errors.New(err.Error())
-			return ErrGithubNeedsLogin
-		} else if strings.Contains(err.Error(), "UNAUTHORIZED") {
-			ErrNeedsLogin = errors.New(err.Error())
-			return ErrNeedsLogin
-		}
-
-		return errors.Wrap(err, "getting remote image")
-	}
-	klog.V(3).Infof("Writing image %v", ref)
-	_, err = daemon.Write(ref, i)
-	if err != nil {
-		return errors.Wrap(err, "writing daemon image")
-	}
-
-	return nil
-}
 
 func retrieveImage(ref name.Reference) (v1.Image, error) {
 	klog.Infof("retrieving image: %+v", ref)
